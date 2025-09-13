@@ -5,12 +5,14 @@ import { Pricing } from "@/components/pricing"
 import { Contact } from "@/components/contact"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import Chatbot from "@/components/chatbot/Chatbot"
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main>
+        <Chatbot />
         <Hero />
         <Features />
         <Impact />

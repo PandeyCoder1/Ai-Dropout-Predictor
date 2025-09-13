@@ -53,7 +53,7 @@ const plans = [
 export function Pricing() {
   return (
     <section id="pricing" className="py-20 bg-muted/30">
-      <div className="container">
+      <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-foreground mb-4 text-balance">
             Choose the Right Plan for Your Institution
