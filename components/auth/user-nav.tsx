@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,21 +8,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { useAuth } from "@/contexts/auth-context"
-import { LogOut, Settings, User } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/auth-context";
+import { LogOut, Settings, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function UserNav() {
-  const { user, isAuthenticated, signOut } = useAuth()
-  const router = useRouter()
+  const { user, isAuthenticated, signOut } = useAuth();
+  const router = useRouter();
 
   const handleSignOut = () => {
-    signOut()
-    router.push("/")
-  }
+    signOut();
+    router.push("/");
+  };
 
   if (!isAuthenticated || !user) {
     return (
@@ -34,7 +34,7 @@ export function UserNav() {
           <Link href="/signup">Get Started</Link>
         </Button>
       </div>
-    )
+    );
   }
 
   const getInitials = (name: string) => {
@@ -42,28 +42,30 @@ export function UserNav() {
       .split(" ")
       .map((n) => n[0])
       .join("")
-      .toUpperCase()
-  }
+      .toUpperCase();
+  };
 
   const getRoleLabel = (role: string) => {
     switch (role) {
       case "admin":
-        return "Administrator"
+        return "Administrator";
       case "teacher":
-        return "Teacher"
+        return "Teacher";
       case "counselor":
-        return "Counselor"
+        return "Counselor";
       default:
-        return role
+        return role;
     }
-  }
+  };
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-primary text-primary-foreground">{getInitials(user.name)}</AvatarFallback>
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              {getInitials(user.name)}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -71,8 +73,12 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-            <p className="text-xs leading-none text-muted-foreground">{getRoleLabel(user.role)}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.email}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {getRoleLabel(user.role)}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -95,5 +101,5 @@ export function UserNav() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
