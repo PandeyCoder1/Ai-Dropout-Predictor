@@ -1,27 +1,47 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { RiskDistributionChart } from "@/components/dashboard/risk-distribution-chart"
-import { AttendanceChart } from "@/components/dashboard/attendance-chart"
-import { RecentAlerts } from "@/components/dashboard/recent-alerts"
-import { QuickStats } from "@/components/dashboard/quick-stats"
-import { LiveActivityFeed } from "@/components/dashboard/live-activity-feed"
-import { useRealtime } from "@/contexts/realtime-context"
-import { Users, AlertTriangle, TrendingUp, GraduationCap } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { RiskDistributionChart } from "@/components/dashboard/risk-distribution-chart";
+import { AttendanceChart } from "@/components/dashboard/attendance-chart";
+import { RecentAlerts } from "@/components/dashboard/recent-alerts";
+import { QuickStats } from "@/components/dashboard/quick-stats";
+import { LiveActivityFeed } from "@/components/dashboard/live-activity-feed";
+import { useRealtime } from "@/contexts/realtime-context";
+import { Users, AlertTriangle, TrendingUp, GraduationCap } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { RegisterStudentForm } from "@/components/dashboard/register-student-form";
 
-export function DashboardOverview() {
-  const { students } = useRealtime()
+export default function DashboardOverview() {
+  const { students } = useRealtime();
+  const { user } = useAuth();
 
-  const totalStudents = students.length
-  const highRiskStudents = students.filter((s) => s.riskCategory === "High").length
-  const averageAttendance = Math.round(students.reduce((sum, student) => sum + student.attendance, 0) / totalStudents)
-  const averageGPA = (students.reduce((sum, student) => sum + student.gpa, 0) / totalStudents).toFixed(1)
+  const totalStudents = students.length;
+  const highRiskStudents = students.filter(
+    (s) => s.riskCategory === "High"
+  ).length;
+  const averageAttendance = Math.round(
+    students.reduce((sum, student) => sum + student.attendance, 0) /
+      totalStudents
+  );
+  const averageGPA = (
+    students.reduce((sum, student) => sum + student.gpa, 0) / totalStudents
+  ).toFixed(1);
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard Overview</h1>
-        <p className="text-muted-foreground">Monitor student risk levels and key metrics in real-time</p>
+        <h1 className="text-3xl font-bold text-foreground">
+          Dashboard Overview
+        </h1>
+        <p className="text-muted-foreground">
+          Monitor student risk levels and key metrics in real-time
+        </p>
       </div>
 
       {/* Quick Stats */}
@@ -53,12 +73,30 @@ export function DashboardOverview() {
         />
       </div>
 
+      {/* Admin: Register Student */}
+      {user?.role === "admin" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Register New Student</CardTitle>
+            <CardDescription>
+              Generate login credentials for a new student and save them to the
+              database.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RegisterStudentForm />
+          </CardContent>
+        </Card>
+      )}
+
       {/* Charts and Activity Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Risk Distribution</CardTitle>
-            <CardDescription>Student risk levels across the institution</CardDescription>
+            <CardDescription>
+              Student risk levels across the institution
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <RiskDistributionChart />
@@ -68,7 +106,9 @@ export function DashboardOverview() {
         <Card>
           <CardHeader>
             <CardTitle>Attendance vs Risk</CardTitle>
-            <CardDescription>Correlation between attendance and dropout risk</CardDescription>
+            <CardDescription>
+              Correlation between attendance and dropout risk
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <AttendanceChart />
@@ -82,12 +122,14 @@ export function DashboardOverview() {
       <Card>
         <CardHeader>
           <CardTitle>Recent Risk Alerts</CardTitle>
-          <CardDescription>Students who recently moved to higher risk categories</CardDescription>
+          <CardDescription>
+            Students who recently moved to higher risk categories
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <RecentAlerts />
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

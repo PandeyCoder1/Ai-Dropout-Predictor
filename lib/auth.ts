@@ -1,19 +1,22 @@
-"use client"
+"use client";
 
-export type UserRole = "student"|"admin" | "teacher" | "counselor"
+export type UserRole = "student"|"admin" | "teacher" | "counsellor" | "parent";
 
+
+import clientPromise from "./mongodb";
+import { ObjectId } from "mongodb";
 export interface User {
-  id: string
-  email: string
-  name: string
-  role: UserRole
-  institution: string
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  institution: string;
 }
 
 export interface AuthState {
-  user: User | null
-  isLoading: boolean
-  isAuthenticated: boolean
+  user: User | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
 }
 
 // Mock authentication - in production, replace with real auth service
@@ -39,50 +42,41 @@ export const mockUsers: Record<string, User & { password: string }> = {
     email: "counselor@school.edu",
     password: "counselor123",
     name: "Emily Rodriguez",
-    role: "counselor",
+    role: "counsellor",
     institution: "Springfield High School",
   },
-}
+};
 
 export async function signIn(email: string, password: string): Promise<User> {
-  // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-
-  const user = mockUsers[email]
-  if (!user || user.password !== password) {
-    throw new Error("Invalid email or password")
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Login failed");
   }
-
-  const { password: _, ...userWithoutPassword } = user
-  return userWithoutPassword
+  return data.user;
 }
 
 export async function signUp(userData: {
-  email: string
-  password: string
-  name: string
-  role: UserRole
-  institution: string
+  email: string;
+  password: string;
+  name: string;
+  role: UserRole;
+  institution: string;
 }): Promise<User> {
-  // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-
-  if (mockUsers[userData.email]) {
-    throw new Error("User already exists")
+  const res = await fetch("/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Signup failed");
   }
-
-  const newUser: User = {
-    id: Date.now().toString(),
-    email: userData.email,
-    name: userData.name,
-    role: userData.role,
-    institution: userData.institution,
-  }
-
-  // In production, this would be saved to database
-  mockUsers[userData.email] = { ...newUser, password: userData.password }
-
-  return newUser
+  return data.user;
 }
 
 // Registring students by admin(schools) 
@@ -115,27 +109,27 @@ export async function registerStudentByAdmin(studentData: {
 export function signOut(): void {
   // Clear any stored tokens/session data
   if (typeof window !== "undefined") {
-    localStorage.removeItem("auth-user")
+    localStorage.removeItem("auth-user");
   }
 }
 
 export function getCurrentUser(): User | null {
-  if (typeof window === "undefined") return null
+  if (typeof window === "undefined") return null;
 
   try {
-    const stored = localStorage.getItem("auth-user")
-    return stored ? JSON.parse(stored) : null
+    const stored = localStorage.getItem("auth-user");
+    return stored ? JSON.parse(stored) : null;
   } catch {
-    return null
+    return null;
   }
 }
 
 export function setCurrentUser(user: User | null): void {
-  if (typeof window === "undefined") return
+  if (typeof window === "undefined") return;
 
   if (user) {
-    localStorage.setItem("auth-user", JSON.stringify(user))
+    localStorage.setItem("auth-user", JSON.stringify(user));
   } else {
-    localStorage.removeItem("auth-user")
+    localStorage.removeItem("auth-user");
   }
 }

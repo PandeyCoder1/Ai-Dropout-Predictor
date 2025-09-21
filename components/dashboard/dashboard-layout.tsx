@@ -1,25 +1,33 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { Button } from "@/components/ui/button"
-import { Menu } from "lucide-react"
+import { Menu, BarChart3, Users, FileText, Settings, Upload, AlertTriangle } from "lucide-react"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
   sidebar?: React.ReactNode
 }
 
-export function DashboardLayout({ children , sidebar }: DashboardLayoutProps) {
+// Default sidebar items (for fallback)
+const sidebarItems = [
+  { label: "Overview", href: "/dashboard", icon: BarChart3 },
+  { label: "Students", href: "/dashboard/students", icon: Users },
+  { label: "Risk Alerts", href: "/dashboard/alerts", icon: AlertTriangle },
+  { label: "Reports", href: "/dashboard/reports", icon: FileText },
+  { label: "Data Upload", href: "/dashboard/upload", icon: Upload },
+  { label: "Settings", href: "/dashboard/settings", icon: Settings },
+]
+
+export function DashboardLayout({ children, sidebar }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-background">
       <div className="flex">
         {/* Mobile sidebar overlay */}
-        
         {sidebarOpen && (
           <div
             className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
@@ -33,7 +41,10 @@ export function DashboardLayout({ children , sidebar }: DashboardLayoutProps) {
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <Sidebar onClose={() => setSidebarOpen(false)} items={[]} />
+          {sidebar
+            ? React.cloneElement(sidebar as React.ReactElement, { onClose: () => setSidebarOpen(false) })
+            : <Sidebar items={sidebarItems} onClose={() => setSidebarOpen(false)} />
+          }
         </div>
 
         {/* Main content */}

@@ -48,7 +48,7 @@ export default function CounselorsDashboardPage() {
   const [report, setReport] = useState("")
 
   return (
-    <ProtectedRoute allowedRoles={["counselor"]}>
+    <ProtectedRoute allowedRoles={["counsellor"]}>
       <DashboardLayout sidebar={<Sidebar items={counselorSidebarItems} />}>
         <div className="space-y-8">
           {/* Header */}

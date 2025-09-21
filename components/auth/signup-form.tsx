@@ -17,9 +17,9 @@ import ParentVerificationPage from "./ParentVerification"
 const dashboardRoutes: Record<UserRole, string> = {
   admin: "/dashboard/school",
   teacher: "/dashboard/Teachers",
-  counselor: "/dashboard/counselors",
+  counsellor: "/dashboard/counsellors",
   student: "/dashboard/students",
-  // parents route is handled separately and not included here
+  parent: "/parent-verification", // Added to satisfy the type
 }
 
 export function SignupForm() {
