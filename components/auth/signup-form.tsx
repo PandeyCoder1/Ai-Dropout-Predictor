@@ -11,6 +11,16 @@ import { useAuth } from "@/contexts/auth-context"
 import type { UserRole } from "@/lib/auth"
 import { Loader2, Eye, EyeOff } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import ParentVerificationPage from "./ParentVerification"
+
+
+const dashboardRoutes: Record<UserRole, string> = {
+  admin: "/dashboard/school",
+  teacher: "/dashboard/Teachers",
+  counselor: "/dashboard/counselors",
+  student: "/dashboard/students",
+  // parents route is handled separately and not included here
+}
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
@@ -64,7 +74,11 @@ export function SignupForm() {
         title: "Account created!",
         description: "Welcome to AI Dropout Predictor.",
       })
-      router.push("/dashboard")
+      if (formData.role === "parents" as UserRole) {
+        router.push("/parent-verification")
+      } else {
+        router.push(dashboardRoutes[formData.role])
+      }
     } catch (error) {
       toast({
         title: "Sign up failed",
@@ -108,19 +122,10 @@ export function SignupForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="institution">Institution</Label>
-        <Input
-          id="institution"
-          placeholder="Enter your school/university name"
-          value={formData.institution}
-          onChange={(e) => handleChange("institution", e.target.value)}
-          required
-          disabled={isLoading}
-        />
-      </div>
-
-      <div className="space-y-2">
         <Label htmlFor="role">Role</Label>
+        <p className="text-sm text-muted-foreground mb-1">
+          <span className="text-red-500 font-medium">Note:</span> Only administrators can register students. Students should contact their school for login credentials.
+        </p>
         <Select onValueChange={(value) => handleChange("role", value)} disabled={isLoading}>
           <SelectTrigger>
             <SelectValue placeholder="Select your role" />
@@ -129,9 +134,30 @@ export function SignupForm() {
             <SelectItem value="admin">Administrator</SelectItem>
             <SelectItem value="teacher">Teacher</SelectItem>
             <SelectItem value="counselor">Counselor</SelectItem>
+            <SelectItem value="parents">Parents</SelectItem>
           </SelectContent>
         </Select>
       </div>
+
+
+           {/* Only show Institution field if role is NOT parents */}
+      {(formData.role as string) !== "parents" && (
+        <div className="space-y-2">
+          <Label htmlFor="institution">Institution</Label>
+          <Input
+            id="institution"
+            placeholder="Enter your school/university name"
+            value={formData.institution}
+            onChange={(e) => handleChange("institution", e.target.value)}
+            required={(formData.role as string) !== "parents"}
+            disabled={isLoading}
+          />
+        </div>
+      )}
+
+      
+       
+
 
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>

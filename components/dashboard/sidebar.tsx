@@ -7,27 +7,51 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/auth-context"
 import { BarChart3, Users, FileText, Settings, Upload, AlertTriangle, GraduationCap, X } from "lucide-react"
 
+// Add this helper function in your sidebar.tsx or a utils file
+function getAlertsHref(role: string) {
+  switch (role) {
+    case "admin":
+      return "/dashboard/institute/alerts"
+    case "teacher":
+      return "/dashboard/teachers/alerts"
+    case "counselor":
+      return "/dashboard/counsellors/alerts"
+    case "student":
+      return "/dashboard/students/alerts"
+    case "parents":
+      return "/dashboard/parents/alerts"
+    default:
+      return "/dashboard/alerts"
+  }
+}
+
 const navigation = [
-  { name: "Overview", href: "/dashboard", icon: BarChart3 },
+  { name: "Overview", href: "/", icon: BarChart3 },
   { name: "Students", href: "/dashboard/students", icon: Users },
-  { name: "Risk Alerts", href: "/dashboard/alerts", icon: AlertTriangle },
+  { name: "Risk Alerts", href: (user: any) => getAlertsHref(user?.role), icon: AlertTriangle },
   { name: "Reports", href: "/dashboard/reports", icon: FileText },
   { name: "Data Upload", href: "/dashboard/upload", icon: Upload },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]
 
-interface SidebarProps {
-  onClose?: () => void
+export interface SidebarItem {
+  label: string
+  href: string
 }
 
-export function Sidebar({ onClose }: SidebarProps) {
+export interface SidebarProps {
+  onClose?: () => void
+  items: SidebarItem[]
+}
+
+export function Sidebar({ onClose, items }: SidebarProps) {
   const pathname = usePathname()
   const { user } = useAuth()
 
   return (
     <div className="flex h-full w-64 flex-col bg-sidebar border-r border-sidebar-border">
       <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border">
-        <Link href="/dashboard" className="flex items-center space-x-2">
+        <Link href="/" className="flex items-center space-x-2">
           <GraduationCap className="h-8 w-8 text-sidebar-accent" />
           <span className="text-lg font-bold text-sidebar-foreground">AI Dropout</span>
         </Link>
@@ -41,11 +65,12 @@ export function Sidebar({ onClose }: SidebarProps) {
       <div className="flex-1 px-4 py-6">
         <nav className="space-y-2">
           {navigation.map((item) => {
-            const isActive = pathname === item.href
+            const href = typeof item.href === "function" ? item.href(user) : item.href
+            const isActive = pathname === href
             return (
               <Link
                 key={item.name}
-                href={item.href}
+                href={href}
                 className={cn(
                   "flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive

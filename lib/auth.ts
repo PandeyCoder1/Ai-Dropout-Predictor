@@ -1,6 +1,6 @@
 "use client"
 
-export type UserRole = "admin" | "teacher" | "counselor"
+export type UserRole = "student"|"admin" | "teacher" | "counselor"
 
 export interface User {
   id: string
@@ -83,6 +83,33 @@ export async function signUp(userData: {
   mockUsers[userData.email] = { ...newUser, password: userData.password }
 
   return newUser
+}
+
+// Registring students by admin(schools) 
+export async function registerStudentByAdmin(studentData: {
+  email: string
+  password: string
+  name: string
+  institution: string
+}): Promise<User> {
+  // Simulate API call delay
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+
+  if (mockUsers[studentData.email]) {
+    throw new Error("Student already exists")
+  }
+
+  const newStudent: User = {
+    id: Date.now().toString(),
+    email: studentData.email,
+    name: studentData.name,
+    role: "student",
+    institution: studentData.institution,
+  }
+
+  mockUsers[studentData.email] = { ...newStudent, password: studentData.password }
+
+  return newStudent
 }
 
 export function signOut(): void {

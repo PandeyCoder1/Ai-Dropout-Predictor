@@ -19,6 +19,16 @@ export function LoginForm() {
   const router = useRouter()
   const { toast } = useToast()
 
+  // Map user roles to their dashboard routes
+  const dashboardRoutes: Record<string, string> = {
+    admin: "/dashboard/Institute",
+    student: "/dashboard/students",
+    teacher: "/dashboard/Teachers",
+    counselor: "/dashboard/counsellors",
+    parents: "/parent-verification"
+    // Add more roles and routes as needed
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -29,7 +39,17 @@ export function LoginForm() {
         title: "Welcome back!",
         description: "You have been successfully signed in.",
       })
-      router.push("/dashboard")
+
+      // Defining dashboard routes based on user roles
+      // After successful signIn
+      const user = JSON.parse(localStorage.getItem("currentUser") || "{}")
+      const role = user.role
+
+      if (role && dashboardRoutes[role]) {
+        router.push(dashboardRoutes[role])
+      } else {
+        router.push("/") // fallback or error page
+      }
     } catch (error) {
       toast({
         title: "Sign in failed",

@@ -58,14 +58,26 @@ export function UserNav() {
     }
   }
 
+  type UserRole = "admin" | "teacher" | "counselor" | "student" | "parents";
+
+  const dashboardRoutes: Record<UserRole, string> = {
+    admin: "/dashboard/Institute",
+    teacher: "/dashboard/Teachers",
+    counselor: "/dashboard/counsellors",
+    student: "/dashboard/students",
+    parents: "/parent-verification", // not used here, handled separately
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+        <button type="button"
+            className="relative h-10 w-10 rounded-full flex items-center justify-center focus:outline-none"
+            aria-label="User menu">
           <Avatar className="h-10 w-10">
             <AvatarFallback className="bg-primary text-primary-foreground">{getInitials(user.name)}</AvatarFallback>
           </Avatar>
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
@@ -77,7 +89,7 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/dashboard" className="cursor-pointer">
+          <Link href={dashboardRoutes[user.role as UserRole] || "/"} className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
             Dashboard
           </Link>

@@ -9,15 +9,17 @@ import { Menu } from "lucide-react"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
+  sidebar?: React.ReactNode
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({ children , sidebar }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-background">
       <div className="flex">
         {/* Mobile sidebar overlay */}
+        
         {sidebarOpen && (
           <div
             className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
@@ -31,7 +33,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <Sidebar onClose={() => setSidebarOpen(false)} />
+          <Sidebar onClose={() => setSidebarOpen(false)} items={[]} />
         </div>
 
         {/* Main content */}
